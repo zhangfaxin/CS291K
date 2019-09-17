@@ -47,4 +47,4 @@ class LSTM(object):
         with tf.name_scope("accuracy"):
             self.correct_pred = tf.equal(tf.argmax(self.predictions, 1),tf.argmax(self.input_y, 1))
             self.accuracy = tf.reduce_mean(tf.cast(self.correct_pred, "float"),name="accuracy")
-        print "LOADED LSTM!"
+        print("LOADED LSTM!")

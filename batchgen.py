@@ -5,12 +5,13 @@ import numpy as np
 
 from IPython import embed
 
-#Separates a file with mixed positive and negative examples into two.
-def separate_dataset(filename):
-    good_out = open("good_"+filename,"w+");
-    bad_out  = open("bad_"+filename,"w+");
 
-    seen = 1;
+# Separates a file with mixed positive and negative examples into two.
+def separate_dataset(filename):
+    good_out = open("good_"+filename,"w+")
+    bad_out = open("bad_"+filename,"w+")
+
+    seen = 1
     with open(filename,'r') as f:
         reader = csv.reader(f)
         reader.next()
@@ -26,20 +27,19 @@ def separate_dataset(filename):
                 good_out.write(sentence+"\n")
 
             if (seen%10000==0):
-                print seen;
+                print(seen)
 
-    good_out.close();
-    bad_out.close();
+    good_out.close()
+    bad_out.close()
 
 
-
-#Load Dataset
+# Load Dataset
 def get_dataset(goodfile,badfile,limit,randomize=True):
     good_x = list(open(goodfile,"r").readlines())
     good_x = [s.strip() for s in good_x]
     
-    bad_x  = list(open(badfile,"r").readlines())
-    bad_x  = [s.strip() for s in bad_x]
+    bad_x = list(open(badfile,"r").readlines())
+    bad_x = [s.strip() for s in bad_x]
 
     if (randomize):
         random.shuffle(bad_x)
@@ -58,13 +58,10 @@ def get_dataset(goodfile,badfile,limit,randomize=True):
     return [x,y]
 
 
-
-
-#Clean Dataset
+# Clean Dataset
 def clean_str(string):
 
-
-    #EMOJIS
+    # EMOJIS
     string = re.sub(r":\)","emojihappy1",string)
     string = re.sub(r":P","emojihappy2",string)
     string = re.sub(r":p","emojihappy3",string)
@@ -79,16 +76,16 @@ def clean_str(string):
     string = re.sub(r":<","emojisad11",string)
     string = re.sub(r">:\(","emojisad12",string)
 
-    #MENTIONS "(@)\w+"
+    # MENTIONS "(@)\w+"
     string = re.sub(r"(@)\w+","mentiontoken",string)
     
-    #WEBSITES
+    # WEBSITES
     string = re.sub(r"http(s)*:(\S)*","linktoken",string)
 
-    #STRANGE UNICODE \x...
+    # STRANGE UNICODE \x...
     string = re.sub(r"\\x(\S)*","",string)
 
-    #General Cleanup and Symbols
+    # General Cleanup and Symbols
     string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
     string = re.sub(r"\'s", " \'s", string)
     string = re.sub(r"\'ve", " \'ve", string)
@@ -106,9 +103,8 @@ def clean_str(string):
     return string.strip().lower()
 
 
-
-#Generate random batches
-#Source: https://github.com/dennybritz/cnn-text-classification-tf/blob/master/data_helpers.py
+# Generate random batches
+# Source: https://github.com/dennybritz/cnn-text-classification-tf/blob/master/data_helpers.py
 def gen_batch(data, batch_size, num_epochs, shuffle=True):
     """
     Generates a batch iterator for a dataset.
@@ -128,9 +124,10 @@ def gen_batch(data, batch_size, num_epochs, shuffle=True):
             end_index = min((batch_num + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
 
+
 if __name__ == "__main__":
-    separate_dataset("small.txt");
+    separate_dataset("small.txt")
 
 
-#42
-#642
+# 42
+# 642

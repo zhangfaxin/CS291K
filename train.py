@@ -64,11 +64,11 @@ x_text, y = batchgen.get_dataset(goodfile, badfile, 5000) #TODO: MAX LENGTH
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
 if (not use_glove):
-    print "Not using GloVe"
+    print("Not using GloVe")
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
     x = np.array(list(vocab_processor.fit_transform(x_text)))
 else:
-    print "Using GloVe"
+    print("Using GloVe")
     embedding_dim = 50
     filename = '../glove.6B.50d.txt'
     def loadGloVe(filename):
@@ -97,18 +97,18 @@ else:
     sess.run(embedding_init, feed_dict={embedding_placeholder: embedding})
 
     from tensorflow.contrib import learn
-    #init vocab processor
+    # init vocab processor
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    #fit the vocab from glove
+    # fit the vocab from glove
     pretrain = vocab_processor.fit(vocab)
     #transform inputs
     x = np.array(list(vocab_processor.transform(x_text)))
 
-    #init vocab processor
+    # init vocab processor
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    #fit the vocab from glove
+    # fit the vocab from glove
     pretrain = vocab_processor.fit(vocab)
-    #transform inputs
+    # transform inputs
     x = np.array(list(vocab_processor.transform(x_text)))
 
 
@@ -126,7 +126,7 @@ y_train, y_dev = y_shuffled[:dev_sample_index], y_shuffled[dev_sample_index:]
 print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
-#embed()
+# embed()
 
 
 # Training
@@ -136,7 +136,7 @@ with tf.Graph().as_default():
     session_conf = tf.ConfigProto(allow_soft_placement=True, log_device_placement=False)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        #embed()
+        # embed()
         if (MODEL_TO_RUN == 0):
             model = CNN_LSTM(x_train.shape[1],y_train.shape[1],len(vocab_processor.vocabulary_),embedding_dim,filter_sizes,num_filters,l2_reg_lambda)
         elif (MODEL_TO_RUN == 1):
@@ -146,9 +146,8 @@ with tf.Graph().as_default():
         elif (MODEL_TO_RUN == 3):
             model = LSTM(x_train.shape[1],y_train.shape[1],len(vocab_processor.vocabulary_),embedding_dim)
         else:
-            print "PLEASE CHOOSE A VALID MODEL!\n0 = CNN_LSTM\n1 = LSTM_CNN\n2 = CNN\n3 = LSTM\n"
-            exit();
-
+            print("PLEASE CHOOSE A VALID MODEL!\n0 = CNN_LSTM\n1 = LSTM_CNN\n2 = CNN\n3 = LSTM\n")
+            exit()
 
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -198,7 +197,7 @@ with tf.Graph().as_default():
         # Initialize all variables
         sess.run(tf.global_variables_initializer())
 
-        #TRAINING STEP
+        # TRAINING STEP
         def train_step(x_batch, y_batch,save=False):
             feed_dict = {
               model.input_x: x_batch,
@@ -213,7 +212,7 @@ with tf.Graph().as_default():
             if save:
                 train_summary_writer.add_summary(summaries, step)
 
-        #EVALUATE MODEL
+        # EVALUATE MODEL
         def dev_step(x_batch, y_batch, writer=None,save=False):
             feed_dict = {
               model.input_x: x_batch,
@@ -229,10 +228,10 @@ with tf.Graph().as_default():
                 if writer:
                     writer.add_summary(summaries, step)
 
-        #CREATE THE BATCHES GENERATOR
+        # CREATE THE BATCHES GENERATOR
         batches = batchgen.gen_batch(list(zip(x_train, y_train)), batch_size, num_epochs)
         
-        #TRAIN FOR EACH BATCH
+        # TRAIN FOR EACH BATCH
         for batch in batches:
             x_batch, y_batch = zip(*batch)
             train_step(x_batch, y_batch)
